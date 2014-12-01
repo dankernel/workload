@@ -22,5 +22,3 @@ if [ $WORK = 1 ]; then
 else
   echo -e '\E[34m'"\033[1m[FAIL]40M\033[0m"
 fi
-
-
