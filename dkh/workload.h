@@ -28,11 +28,6 @@
 #define MB (KB * KB)
 #define GB (MB * KB)
 
-/* CONFIG */
-#define CACHE_BLOCK_SIZE (4 * KB)
-#define CACHE_SIZE (128 * MB)
-#define CACHE_LEN (CACHE_SIZE/ CACHE_BLOCK_SIZE)
-
 #define DEBUG_OPTION 0
 
 struct workload
@@ -57,8 +52,7 @@ struct stats
 };/*}}}*/
 
 /**
- * Init cache memory.
- * @param m : cache size (max list size)
+ * Init stats memory.
  * @return : stats strcut pointer
  */
 struct stats *init_stats(void)
@@ -79,7 +73,7 @@ struct stats *init_stats(void)
 
 /**
  * Report result. 
- * @param st : cache memory struct
+ * @param st : stats struct
  */
 void report_st(struct stats *st, char *fn)
 {/*{{{*/
@@ -91,9 +85,9 @@ void report_st(struct stats *st, char *fn)
 }/*}}}*/
 
 /**
- * Del cache memory.(cache list)
- * @param st : cache memory struct
- * @return : error code
+ * Del stats
+ * @param st : stats struct
+ * @retustatsel_st(struct stats *st)
  */
 int del_st(struct stats *st)
 {/*{{{*/
@@ -112,12 +106,12 @@ int del_st(struct stats *st)
 }/*}}}*/
 
 /**
- * run cache.
- * @param st : cache memory info strcut
+ * read workload size
+ * @param st : stats memory info strcut
  * @param wl : target workload struct
  * @return : error code
  */
-int run_cache(struct stats *st, struct workload *wl)
+int read_size(struct stats *st, struct workload *wl)
 {/*{{{*/
   double start = 0;
   double end = 0;
@@ -213,7 +207,7 @@ int read_column(struct workload *wl, char *buf)
 }/*}}}*/
 
 /**
- * cache simulator main. read worklosd and analysis..
+ * read worklosd and analysis..
  * @param fp : file pointer
  * @return : error code
  */
@@ -227,7 +221,6 @@ int read_workload(FILE *fp, char *file_name)
   /* NULL arg test */
   if (!fp)
     printf("arg is NULL\n");
-
 
   wl = malloc(sizeof(struct workload));
   st = init_stats();
@@ -245,12 +238,12 @@ int read_workload(FILE *fp, char *file_name)
     if (read_column(wl, buf) < 0)
       goto end;
 
-    /* run cache mem  */
-    run_cache(st, wl);
+    /* read workload size. MAX, MIN */
+    read_size(st, wl);
   }
 
 end:
-  /* reprot */
+  /* reprot stats */
   report_st(st, file_name);
 
   /* DEBUG.. PRINT LIST */
